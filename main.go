@@ -84,7 +84,7 @@ func Post(water int, wind int, status_water string, status_wind string) {
 		return
 	}
 
-	toJson, err := json.Marshal(data)
+	toJson, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		log.Fatalln(err)
 		return
