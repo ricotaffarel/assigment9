@@ -11,35 +11,44 @@ import (
 	"time"
 )
 
+type Data struct {
+	Water int `json:"water"`
+	Wind  int `json:"wind"`
+}
+
 func main() {
 	var statusWater string
 	var statusWind string
 	for {
 		valueWater := rand.Intn(100) + 1
 		valueWind := rand.Intn(100) + 1
-		if valueWater <= 5 && valueWind <= 6 {
-			statusWater = "aman"
-			statusWind = "aman"
-			Post(valueWater, valueWind, statusWater, statusWind)
-		} else if valueWater >= 6 && valueWater <= 8 && valueWind >= 7 && valueWind <= 15 {
-			statusWater = "siaga"
-			statusWind = "siaga"
-			Post(valueWater, valueWind, statusWater, statusWind)
-		} else if valueWater >= 8 && valueWind >= 15 {
-			statusWater = "bahaya"
-			statusWind = "bahaya"
-			Post(valueWater, valueWind, statusWater, statusWind)
+
+		if valueWater < 5 {
+			statusWater = "Aman"
+		} else if valueWater >= 5 && valueWater <= 8 {
+			statusWater = "Siaga"
+		} else {
+			statusWater = "Bahaya"
 		}
+
+		if valueWind < 6 {
+			statusWind = "Aman"
+		} else if valueWind >= 6 && valueWind <= 15 {
+			statusWind = "Siaga"
+		} else {
+			statusWind = "Bahaya"
+		}
+
+		Post(valueWater, valueWind, statusWater, statusWind)
 		time.Sleep(15 * time.Second)
 	}
 
 }
 
 func Post(water int, wind int, status_water string, status_wind string) {
-	data := map[string]interface{}{
-		"water": water,
-		"wind":  wind,
-	}
+	var data Data
+	data.Water = water
+	data.Wind = wind
 
 	reqJson, err := json.Marshal(data)
 	Client := http.Client{}
@@ -69,7 +78,19 @@ func Post(water int, wind int, status_water string, status_wind string) {
 		return
 	}
 
-	fmt.Println(string(body))
+	err = json.Unmarshal([]byte(body), &data)
+	if err != nil {
+		log.Fatalln(err)
+		return
+	}
+
+	toJson, err := json.Marshal(data)
+	if err != nil {
+		log.Fatalln(err)
+		return
+	}
+
+	fmt.Println(string(toJson))
 	fmt.Println("status water : ", status_water)
 	fmt.Println("status wind : ", status_wind)
 	fmt.Println("===============================")
