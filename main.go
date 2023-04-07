@@ -20,6 +20,7 @@ func main() {
 	var statusWater string
 	var statusWind string
 	for {
+		rand.Seed(time.Now().UnixNano())
 		valueWater := rand.Intn(100) + 1
 		valueWind := rand.Intn(100) + 1
 
@@ -40,7 +41,7 @@ func main() {
 		}
 
 		Post(valueWater, valueWind, statusWater, statusWind)
-		time.Sleep(15 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 
 }
